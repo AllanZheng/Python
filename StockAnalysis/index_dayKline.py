@@ -20,6 +20,7 @@ class stockdata:
         self.Code = c
         self.Name = d
         self.Date = date
+
 url = 'http://api.waizaowang.com/doc/getDayKLine'
 
 def GetData(startdate,enddate,type,code):
@@ -51,6 +52,8 @@ def GetData(startdate,enddate,type,code):
     f.close()
     name = startdate+"-"+enddate+"-"+code
     return DataList,name
+
+#统计与画图
 def SatisticWeekDay(data:[stockdata],name:str):
     Weekday =("Mon","Tue","Wed","Thurs","Fri")
     IncRes =[0,0,0,0,0]
@@ -84,21 +87,4 @@ def SatisticWeekDay(data:[stockdata],name:str):
     return
 
 data,name = GetData('2000-01-01','2020-12-31',1,'399001')
-SatisticWeekDay(data,name)
-data,name = GetData('2010-01-01','2020-12-31',1,'399001')
-SatisticWeekDay(data,name)
-data,name = GetData('2015-01-01','2020-12-31',1,'399001')
-SatisticWeekDay(data,name)
-data,name = GetData('2005-01-01','2020-12-31',1,'399001')
-SatisticWeekDay(data,name)
-
-data,name = GetData('2000-01-01','2020-12-31',1,'000001')
-SatisticWeekDay(data,name)
-data,name = GetData('2010-01-01','2020-12-31',1,'000001')
-SatisticWeekDay(data,name)
-data,name = GetData('2015-01-01','2020-12-31',1,'000001')
-SatisticWeekDay(data,name)
-data,name = GetData('2005-01-01','2020-12-31',1,'000001')
-SatisticWeekDay(data,name)
-data,name = GetData('1995-01-01','2020-12-31',1,'000001')
 SatisticWeekDay(data,name)
