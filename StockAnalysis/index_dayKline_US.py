@@ -1,29 +1,16 @@
-import codecs
 import csv
 import sys
 from datetime import datetime
-
 import matplotlib.pyplot as plt
 import numpy as np
-import requests
+
+from StockAnalysis import data_struct
+import yfinance as yf
 
 
-class stockdata:
-     Weekday = 1
-     IsIncrease = True
-     Code = ''
-     Name = ''
-     Date = ''
-     def __init__(self,a,b,c,d,date):
-        self.Weekday = a
-        self.IsIncrease = b
-        self.Code = c
-        self.Name = d
-        self.Date = date
 
-url = 'http://api.waizaowang.com/doc/getDayKLine'
 
-def GetData(startdate,enddate,type,code):
+def GetData(startdate,enddate,code):
     param = {
         'code': code,
         'type': type,
@@ -31,20 +18,25 @@ def GetData(startdate,enddate,type,code):
         'endDate':enddate,
         'stockType':0,
     }
-    res = requests.get(url,params=param)
-
-    resdata = res.text.split("\n")
-    DataList = []
     syspath = sys.path[0]
     filename = syspath+"\\data\\"+startdate+"-"+enddate+"-"+code+".csv"
+    f =open(filename,"r",encoding='utf-8-sig')
+    # if f==None:
+    resdata = yf.download(code, start=startdate, end=enddate, progress=False)
+    # else:
+    #     read
+    DataList = []
     f = open(filename,'w+',encoding='utf-8-sig')
     writer = csv.writer(f)
-    writer.writerow("股票代码,股票名称,交易市场,交易日,开盘价,收盘价,最高价,最低价,成交量（单位手）,成交额（单位万元）,换手率".split(","))
-    for i in resdata:
-        column = i.split(",")
+    writer.writerow("股票代码,交易日,开盘价,收盘价,最高价,最低价,成交量".split(","))
+    for i in resdata.itertuples():
+        column = []
+        column.append(code)
+        for j in i:
+            column.append(j)
         writer.writerow(column)
-        record = stockdata(datetime.strptime(column[3],"%Y-%m-%d").weekday(),True,column[0],column[1],column[3])
-        if float(column[5])-float(column[4])>0.0:
+        record = data_struct.stockdata(column[1].weekday(),True,column[0],"",column[1])
+        if float(column[3])-float(column[2])>0.0:
             record.IsIncrease = True
         else:
             record.IsIncrease = False
@@ -54,8 +46,8 @@ def GetData(startdate,enddate,type,code):
     return DataList,name
 
 #统计与画图
-def SatisticWeekDay(data:[stockdata],name:str):
-    Weekday =("Mon","Tue","Wed","Thurs","Fri")
+def SatisticWeekDay(data:[data_struct.stockdata],name:str):
+    Weekday =("Mon","Tue","Wed","Thur","Fri")
     IncRes =[0,0,0,0,0]
     DescRes =[0,0,0,0,0]
     if len(data)<=0:
@@ -81,10 +73,13 @@ def SatisticWeekDay(data:[stockdata],name:str):
     plt.ylabel('天数')  # 纵坐标轴标题
     title = name+'星期涨跌统计'
     plt.title(title)
-    jpgfilename = './'+name+'.jpg'
+    jpgfilename = './'+'graph'+'\\'+name+'.jpg'
     plt.savefig(jpgfilename)
     plt.show()
     return
 
-data,name = GetData('2000-01-01','2020-12-31',1,'399001')
-SatisticWeekDay(data,name)
+
+dji_data,name = GetData('2010-01-01','2021-01-05','DJI')
+SatisticWeekDay(dji_data,name)
+ndx_data = yf.download('NDX', start='2021-01-01', end='2021-01-01', progress=False)
+#spx_data = yf.download('SPX', start='2020-01-01', end='2021-01-01', progress=False)
