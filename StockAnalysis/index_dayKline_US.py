@@ -20,7 +20,7 @@ def GetData(startdate,enddate,code):
     }
     syspath = sys.path[0]
     filename = syspath+"\\data\\"+startdate+"-"+enddate+"-"+code+".csv"
-    f =open(filename,"r",encoding='utf-8-sig')
+    #f =open(filename,"r",encoding='utf-8-sig')
     # if f==None:
     resdata = yf.download(code, start=startdate, end=enddate, progress=False)
     # else:
@@ -79,7 +79,7 @@ def SatisticWeekDay(data:[data_struct.stockdata],name:str):
     return
 
 
-dji_data,name = GetData('2010-01-01','2021-01-05','DJI')
+dji_data,name = GetData('2015-01-01','2021-01-05','DJI')
 SatisticWeekDay(dji_data,name)
 ndx_data = yf.download('NDX', start='2021-01-01', end='2021-01-01', progress=False)
 #spx_data = yf.download('SPX', start='2020-01-01', end='2021-01-01', progress=False)
